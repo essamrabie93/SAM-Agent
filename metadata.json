@@ -1,0 +1,5 @@
+{
+  "name": "SAM - AI Tech Support Assistant",
+  "description": "A smart technical support chatbot that uses a local knowledge base and Gemini AI to assist users with IT issues.",
+  "requestFramePermissions": []
+}
