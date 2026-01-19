@@ -114,8 +114,9 @@ const App: React.FC = () => {
     }
   };
 
-  const findBestKBMatch = (input: string): KBEntry | null => {
-    const kb = getKB();
+  // Fix: Changed findBestKBMatch to be async to correctly await getKB()
+  const findBestKBMatch = async (input: string): Promise<KBEntry | null> => {
+    const kb = await getKB();
     const cleanInput = input.toLowerCase().trim().replace(/[?!.]/g, '');
     const queryTokens = cleanInput.split(/\s+/).filter(t => t.length > 2 && !STOP_WORDS.has(t));
     
@@ -180,7 +181,8 @@ const App: React.FC = () => {
     if (awaitingEmailForCustody) {
       setIsTyping(true);
       setAwaitingEmailForCustody(false);
-      const asset = findAssetByEmail(currentInput);
+      // Fix: Await the result of findAssetByEmail as it is an async function
+      const asset = await findAssetByEmail(currentInput);
       setTimeout(() => {
         if (asset) {
           setUserAssets(asset);
@@ -226,7 +228,8 @@ const App: React.FC = () => {
     }
 
     // Knowledge Base Match
-    const match = findBestKBMatch(currentInput);
+    // Fix: Await findBestKBMatch as it is now an async function
+    const match = await findBestKBMatch(currentInput);
 
     if (match) {
       setTimeout(() => {

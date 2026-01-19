@@ -1,46 +1,42 @@
 
-# 🚀 How to Deploy & Update SAM
+# 🚀 How to Deploy & Sync SAM
 
-SAM is designed to be hosted on Vercel. Because there is no external database, follow these steps to manage your data.
+SAM can sync data across all your devices using **Firebase** (Free Tier).
 
-## 📦 Initial Deployment
-1. **GitHub**: Create a repo and push this code.
-2. **Vercel**: Create a project from that repo.
-3. **Environment Variable**: Add `API_KEY` with your Gemini Key in Vercel settings.
-4. **Deploy**: Your app is now live at `your-app.vercel.app`.
+## ☁️ Option A: Firebase Sync (Highly Recommended)
+This allows real-time updates across multiple devices automatically.
 
----
-
-## 🔄 How to Update Data (Knowledge Base & Assets)
-Since SAM stores data in the browser locally first, you must "Sync" your changes to the code to make them permanent for all users.
-
-### 1. Add Data via UI
-Open your live Vercel website, log into **IT Admin**, and add your questions or asset records.
-
-### 2. Export to Clipboard
-*   In the **Knowledge Base** tab, click **"Export for Code"**.
-*   In the **Asset Custody** tab, click **"Export Assets for Code"**.
-*   This copies a JSON block to your clipboard.
-
-### 3. Update the Source Code
-Open `services/storage.ts` in your code editor (VS Code, etc.):
-*   Find `const DEFAULT_KB: KBEntry[] = [];` and paste your copied JSON inside the brackets.
-*   Find `const DEFAULT_ASSETS: AssetEntry[] = [];` and do the same for assets.
-
-### 4. Push to GitHub
-```bash
-git add .
-git commit -m "Updated knowledge base"
-git push origin main
-```
-
-### 5. Final Result
-Vercel will detect the push and automatically update. Now, **every user** who visits your site will see the new information you added.
+1. **Create Firebase Project**: Visit [Firebase Console](https://console.firebase.google.com).
+2. **Add Firestore**:
+   - Click "Firestore Database" in the sidebar.
+   - Click "Create Database".
+   - Start in **Test Mode** (allows reads/writes without complex rules).
+3. **Get Config Keys**:
+   - Go to Project Settings (Gear icon) > General.
+   - Under "Your apps", click the `</>` (Web) icon to register an app.
+   - Copy the `firebaseConfig` object.
+4. **Update Code**:
+   - Open `services/firebase.ts` and paste your keys into the `firebaseConfig` object.
+5. **Push & Deploy**:
+   - Push your changes to GitHub. Vercel will rebuild.
+   - **SAM is now connected to the cloud!** Any changes you make in the Admin panel will instantly appear on all user devices.
 
 ---
 
-## 🛠️ Troubleshooting
-If you've updated the code but your browser still shows "old" data from a previous session:
-1. Go to **IT Admin**.
-2. Click the **"Reset to Code"** button at the top right.
-3. This wipes your browser's local cache and forces it to reload the "Official" version from your GitHub code.
+## 💾 Option B: Git Backup (No Database)
+If you don't want to use Firebase, use the manual sync method.
+
+1. **Add Data**: Use the Admin Panel locally.
+2. **Copy Backup**: Go to **Admin > Cloud & Deployment** and click "Copy Backup Code".
+3. **Paste**: Replace the contents of `services/storage.ts` with your clipboard.
+4. **Push**: Commit and push to GitHub.
+
+---
+
+## 📊 Importing Assets via CSV
+You can now bulk-import your equipment spreadsheet:
+1. Ensure your CSV has a column named **email** or **User Email**.
+2. Go to **Admin > Asset Custody > Browse CSV**.
+3. Select your `.csv` file.
+4. SAM will automatically map columns like "Laptop SN", "Monitor", etc.
+5. If Firebase is active, these will sync to the cloud immediately.
