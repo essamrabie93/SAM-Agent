@@ -1,9 +1,19 @@
-// Backup Generated on 1/19/2026, 5:04:15 PM
+
 import { KBEntry, AssetEntry, AppStats } from '../types';
+import * as cloud from './firebase';
+
 const KB_KEY = 'sam_knowledge_base';
 const ASSETS_KEY = 'sam_asset_base';
 const STATS_KEY = 'sam_stats';
-const DEFAULT_KB: KBEntry[] = [];
+
+const DEFAULT_KB: KBEntry[] = [
+  {
+    id: 'default-vpn',
+    question: 'How do I connect to the VPN?',
+    answer: '<p>To connect to the <b>Global VPN</b>:</p><ol><li>Open Cisco AnyConnect.</li><li>Enter <code>vpn.stagwell.com</code>.</li><li>Use your corporate email and password.</li><li>Approve the MFA prompt on your phone.</li></ol>'
+  }
+];
+
 const DEFAULT_ASSETS: AssetEntry[] = [
   {
     "email": "youmna.hisham@assemblyglobal.com",
@@ -798,4 +808,83 @@ const DEFAULT_ASSETS: AssetEntry[] = [
     "mouse": "Mouse"
   }
 ];
-// ...
+
+export const getKB = async (): Promise<KBEntry[]> => {
+  if (cloud.isFirebaseActive()) {
+    try {
+      const cloudData = await cloud.fetchCloudKB();
+      if (cloudData.length > 0) {
+        localStorage.setItem(KB_KEY, JSON.stringify(cloudData));
+        return cloudData;
+      }
+    } catch (e) {
+      console.warn("Cloud KB fetch failed, falling back to local.");
+    }
+  }
+  const local = localStorage.getItem(KB_KEY);
+  return local ? JSON.parse(local) : DEFAULT_KB;
+};
+
+export const saveKB = async (entries: KBEntry[]): Promise<void> => {
+  localStorage.setItem(KB_KEY, JSON.stringify(entries));
+  if (cloud.isFirebaseActive()) {
+    for (const entry of entries) {
+      await cloud.saveCloudKBEntry(entry);
+    }
+  }
+};
+
+export const deleteKB = async (id: string, updatedEntries: KBEntry[]): Promise<void> => {
+  localStorage.setItem(KB_KEY, JSON.stringify(updatedEntries));
+  if (cloud.isFirebaseActive()) {
+    await cloud.deleteCloudKBEntry(id);
+  }
+};
+
+export const getAssets = async (): Promise<AssetEntry[]> => {
+  if (cloud.isFirebaseActive()) {
+    try {
+      const cloudData = await cloud.fetchCloudAssets();
+      if (cloudData.length > 0) {
+        localStorage.setItem(ASSETS_KEY, JSON.stringify(cloudData));
+        return cloudData;
+      }
+    } catch (e) {
+      console.warn("Cloud Assets fetch failed, falling back to local.");
+    }
+  }
+  const local = localStorage.getItem(ASSETS_KEY);
+  return local ? JSON.parse(local) : DEFAULT_ASSETS;
+};
+
+export const saveAssets = async (assets: AssetEntry[]): Promise<void> => {
+  localStorage.setItem(ASSETS_KEY, JSON.stringify(assets));
+  if (cloud.isFirebaseActive()) {
+    for (const asset of assets) {
+      await cloud.saveCloudAsset(asset);
+    }
+  }
+};
+
+export const findAssetByEmail = async (email: string): Promise<AssetEntry | null> => {
+  const assets = await getAssets();
+  const lowerEmail = email.toLowerCase().trim();
+  return assets.find(a => a.email.toLowerCase() === lowerEmail) || null;
+};
+
+export const getStats = (): AppStats => {
+  const local = localStorage.getItem(STATS_KEY);
+  return local ? JSON.parse(local) : { accessCount: 0 };
+};
+
+export const incrementAccessCount = (): void => {
+  const stats = getStats();
+  stats.accessCount++;
+  localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+};
+
+export const clearAllData = (): void => {
+  localStorage.removeItem(KB_KEY);
+  localStorage.removeItem(ASSETS_KEY);
+  localStorage.removeItem(STATS_KEY);
+};
