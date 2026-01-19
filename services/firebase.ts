@@ -1,10 +1,9 @@
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeApp, FirebaseApp } from "firebase/app";
+import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc, Firestore, QueryDocumentSnapshot } from "firebase/firestore";
 import { KBEntry, AssetEntry } from '../types';
 
 // IMPORTANT: Replace these with your project's values from the Firebase Console
-// Settings > Project Settings > General > Your apps > SDK setup and configuration (Config)
 const firebaseConfig = {
   apiKey: "AIzaSyCUjoFhNw85B2q3m7l84nIuqSycxCEUvpk",
   authDomain: "sam-agent-856e0.firebaseapp.com",
@@ -16,17 +15,17 @@ const firebaseConfig = {
   measurementId: "G-KJGJ2EB47L"
 };
 
-let db: any = null;
+let db: Firestore | null = null;
 
 try {
   // Only initialize if we have a valid project ID
-  if (firebaseConfig.projectId !== "YOUR_PROJECT_ID") {
-    const app = initializeApp(firebaseConfig);
+  if (firebaseConfig.projectId && firebaseConfig.projectId !== "YOUR_PROJECT_ID") {
+    const app: FirebaseApp = initializeApp(firebaseConfig);
     db = getFirestore(app);
     console.log("🔥 Firebase Connected Successfully");
   }
 } catch (e) {
-  console.warn("Firebase initialization skipped: Config not provided.");
+  console.warn("Firebase initialization skipped: Config not provided or invalid.");
 }
 
 export const isFirebaseActive = () => db !== null;
@@ -34,7 +33,7 @@ export const isFirebaseActive = () => db !== null;
 export const fetchCloudKB = async (): Promise<KBEntry[]> => {
   if (!db) return [];
   const querySnapshot = await getDocs(collection(db, "kb"));
-  return querySnapshot.docs.map(doc => doc.data() as KBEntry);
+  return querySnapshot.docs.map((docSnapshot: QueryDocumentSnapshot) => docSnapshot.data() as KBEntry);
 };
 
 export const saveCloudKBEntry = async (entry: KBEntry) => {
@@ -50,7 +49,7 @@ export const deleteCloudKBEntry = async (id: string) => {
 export const fetchCloudAssets = async (): Promise<AssetEntry[]> => {
   if (!db) return [];
   const querySnapshot = await getDocs(collection(db, "assets"));
-  return querySnapshot.docs.map(doc => doc.data() as AssetEntry);
+  return querySnapshot.docs.map((docSnapshot: QueryDocumentSnapshot) => docSnapshot.data() as AssetEntry);
 };
 
 export const saveCloudAsset = async (asset: AssetEntry) => {
