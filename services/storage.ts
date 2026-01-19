@@ -16,45 +16,10 @@ const STATS_KEY = 'sam_stats';
  */
 
 const DEFAULT_KB: KBEntry[] = [
-  // Example: { "id": "1", "question": "How to reset VPN?", "answer": "Contact helpdesk..." }
   // PASTE YOUR KB JSON HERE:
-Thanks for reporting this.  Your laptop might need an update to fix this issue.
-Can you please follow these steps below to run updates on your laptop? 
- 
-1. Search for "Dell Command | Update" from the Start menu., or locate it under the 'All Apps' list:
-
-
-
-2. Click the 'Check' button.
-
-
-
-3. After performing a search, Command | Update will tell you if you have any updates available. If you want, you can review them by clicking 'View Details'. You can also select which updates you want to install, but just leave everything checked unless you have a reason not to.
-
-I recommend keeping the 'Automatically restart system' box unchecked. When you're ready, go ahead and click the 'Install' button.
-
-
-
-
-6. Command | Update will download and install your updates. 
- 
-
-
-
-7. If the updates need a restart, you'll be prompted for a restart. Remember: make sure your computer is plugged into power, then click 'Restart'.
-​
-
-
-After installation, your computer will restart and you can get back to work. Most system updates like this take less than 10 minutes to complete.
-
-I'll throw in one last warning about keeping your computer plugged in while it's installing and restarting. If your computer loses power while installing critical system components (like the BIOS), this can corrupt the BIOS and turn your computer into a paperweight. Seriously, a bad BIOS update can irreparably and permanently break your computer, so keep it plugged in.
-
-Please, let me know if this works for you.
-
 ];
 
 const DEFAULT_ASSETS: AssetEntry[] = [
-  // Example: { "email": "user@company.com", "laptop": "SN123", ... }
   // PASTE YOUR ASSETS JSON HERE:
 ];
 
@@ -62,15 +27,16 @@ export const getKB = (): KBEntry[] => {
   const localData = localStorage.getItem(KB_KEY);
   const localKB: KBEntry[] = localData ? JSON.parse(localData) : [];
   
-  // Merge: Prioritize local storage but include defaults from code if not already present
-  const merged = [...localKB];
-  DEFAULT_KB.forEach(defEntry => {
-    if (!merged.find(e => e.question.toLowerCase().trim() === defEntry.question.toLowerCase().trim())) {
-      merged.push(defEntry);
-    }
-  });
+  // Create a map for easy lookups
+  const kbMap = new Map<string, KBEntry>();
   
-  return merged;
+  // 1. Load defaults from code (The "Official" version)
+  DEFAULT_KB.forEach(entry => kbMap.set(entry.question.toLowerCase().trim(), entry));
+  
+  // 2. Overlay local storage (Your recent unsaved UI edits)
+  localKB.forEach(entry => kbMap.set(entry.question.toLowerCase().trim(), entry));
+  
+  return Array.from(kbMap.values());
 };
 
 export const saveKB = (entries: KBEntry[]) => {
@@ -81,15 +47,15 @@ export const getAssets = (): AssetEntry[] => {
   const localData = localStorage.getItem(ASSETS_KEY);
   const localAssets: AssetEntry[] = localData ? JSON.parse(localData) : [];
   
-  // Merge: Ensure code-based defaults are available
-  const merged = [...localAssets];
-  DEFAULT_ASSETS.forEach(defAsset => {
-    if (!merged.find(a => a.email.toLowerCase().trim() === defAsset.email.toLowerCase().trim())) {
-      merged.push(defAsset);
-    }
-  });
+  const assetMap = new Map<string, AssetEntry>();
   
-  return merged;
+  // 1. Load defaults from code
+  DEFAULT_ASSETS.forEach(asset => assetMap.set(asset.email.toLowerCase().trim(), asset));
+  
+  // 2. Overlay local storage
+  localAssets.forEach(asset => assetMap.set(asset.email.toLowerCase().trim(), asset));
+  
+  return Array.from(assetMap.values());
 };
 
 export const saveAssets = (entries: AssetEntry[]) => {
@@ -116,5 +82,4 @@ export const incrementAccessCount = () => {
 export const clearAllData = () => {
   localStorage.removeItem(KB_KEY);
   localStorage.removeItem(ASSETS_KEY);
-  // We keep stats so the count doesn't reset to 0 unless desired
 };
