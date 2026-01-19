@@ -16,10 +16,14 @@ const STATS_KEY = 'sam_stats';
  */
 
 const DEFAULT_KB: KBEntry[] = [
-  // PASTE YOUR KB JSON HERE:
+  {
+    "id": "1768813226609",
+    "question": "Slowness issue",
+    "answer": "<div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span dir=\"ltr\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">Thanks for reporting this. &nbsp;Your laptop might need an update to fix this issue.</span></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span dir=\"ltr\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">Can you please follow these steps below to run updates on your laptop?&nbsp;<br style=\"-webkit-font-smoothing: antialiased;\">&nbsp;</span></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">1. Search for \"Dell Command | Update\" from the Start menu.</div>"
+  }
+];
 
 const DEFAULT_ASSETS: AssetEntry[] = [
-  // PASTE YOUR ASSETS JSON HERE:
   {
     "email": "youmna.hisham@assemblyglobal.com",
     "laptop": "18JNA67",
@@ -508,150 +512,6 @@ const DEFAULT_ASSETS: AssetEntry[] = [
   },
   {
     "email": "norhan.sherif@assemblyglobal.com",
-    "laptop": "F0CKQ34",
-    "monitor": "JR7C7P3",
-    "headset": "G242L7",
-    "dockingStation": "BXC07Z3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "fareeda.hesham@assemblyglobal.com",
-    "laptop": "FJTW2M3",
-    "monitor": "CGR9TJ3",
-    "headset": "F4W833",
-    "dockingStation": "D9XJZS3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "farah.elsebae@assemblyglobal.com",
-    "laptop": "CL29GK3",
-    "monitor": "HFP9TJ3",
-    "headset": "F4W84A",
-    "dockingStation": "1H26KP3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "aya.sayed@assemblyglobal.com",
-    "laptop": "2G2W5D3",
-    "monitor": "83Q9TJ3",
-    "headset": "G41XGC",
-    "dockingStation": "CB76KP3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "shaza.walid@assemblyglobal.com",
-    "laptop": "PF59TN1B",
-    "monitor": "FYV9TJ3",
-    "headset": "G6F3XB",
-    "dockingStation": "BBJLBZ3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "lama.elkilany@assemblyglobal.com",
-    "laptop": "GM0W7WKR",
-    "monitor": "",
-    "headset": "G242KP",
-    "dockingStation": "",
-    "keyboard": "",
-    "mouse": ""
-  },
-  {
-    "email": "sara.morsi@assemblyglobal.com",
-    "laptop": "GG5D3M3",
-    "monitor": "D9Q9TJ3",
-    "headset": "F4W82X",
-    "dockingStation": "5L6DKP3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "merna.helal@assemblyglobal.com",
-    "laptop": "GM0TL4BF",
-    "monitor": "V5TKA268",
-    "headset": "F4W842",
-    "dockingStation": "ZVQ2CYNA",
-    "keyboard": "",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "mohamed.samir@assemblyglobal.com",
-    "laptop": "1G674J3",
-    "monitor": "880W5P3",
-    "headset": "G242LA",
-    "dockingStation": "JBK07Z3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "renan.sherif@assemblyglobal.com",
-    "laptop": "",
-    "monitor": "H9V06P3",
-    "headset": "G242K3",
-    "dockingStation": "9YC07Z3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "mariam.youssef@assemblyglobal.com",
-    "laptop": "JNW3192RPH",
-    "monitor": "",
-    "headset": "F4W84H",
-    "dockingStation": "",
-    "keyboard": "",
-    "mouse": ""
-  },
-  {
-    "email": "rogina.armanyous@assemblyglobal.com",
-    "laptop": "5RGW2M3",
-    "monitor": "H4P9TJ3",
-    "headset": "F4X9UM",
-    "dockingStation": "3V57KP3",
-    "keyboard": "Keyboard",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "nadeen.essam@assemblyglobal.com",
-    "laptop": "29CD3M3",
-    "monitor": "HFN9TJ3",
-    "headset": "F4X9V6",
-    "dockingStation": "225QTS3",
-    "keyboard": "",
-    "mouse": ""
-  },
-  {
-    "email": "salma.shehab@assemblyglobal.com",
-    "laptop": "PF59TN23",
-    "monitor": "C8Q9TJ3",
-    "headset": "F4W84C",
-    "dockingStation": "7Q90VS3",
-    "keyboard": "",
-    "mouse": "Mouse"
-  },
-  {
-    "email": "mohab.emara@assemblyglobal.com",
-    "laptop": "PF4QTHYX",
-    "monitor": "J8CCTJ3",
-    "headset": "F4W841",
-    "dockingStation": "H2X6ZQ3",
-    "keyboard": "",
-    "mouse": ""
-  },
-  {
-    "email": "mohamed.elsayed@assemblyglobal.com",
-    "laptop": "20444M3",
-    "monitor": "7SZ9TJ3",
-    "headset": "G242L5",
-    "dockingStation": "6SF4VS3",
-    "keyboard": "Keyboard",
-    "mouse": ""
-  },
-  {
-    "email": "maryam.nabil@assemblyglobal.com",
     "laptop": "F04LGK3",
     "monitor": "Monitor",
     "headset": "Headset",
@@ -812,33 +672,22 @@ const DEFAULT_ASSETS: AssetEntry[] = [
     "keyboard": "",
     "mouse": "Mouse"
   }
-  ,
-  
-  {
-    "id": "1768813226609",
-    "question": "Slowness issue",
-    "answer": "<div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span dir=\"ltr\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">Thanks for reporting this. &nbsp;Your laptop might need an update to fix this issue.</span></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span dir=\"ltr\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">Can you please follow these steps below to run updates on your laptop?&nbsp;<br style=\"-webkit-font-smoothing: antialiased;\">&nbsp;</span></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">1. Search for \"Dell Command | Update\" from the Start menu., or locate it under the 'All Apps' list:</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><img src=\"https://attachment.freshservice.com/inline/attachment?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAwNTMyNDQxODYsImRvbWFpbiI6InN0YWd3ZWxsdGVjaC5mcmVzaHNlcnZpY2UuY29tIiwidHlwZSI6MX0.9O7bA60Ux2shVN6-kEWArxCBOBqUwBEWsIqnd2EIG_0\" data-id=\"10053244186\" data-store-type=\"1\" class=\"fr-fil fr-dib\" style=\"margin: 5px auto 5px 0px; padding: 0px 1px; border: none; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: top; cursor: pointer; position: relative; display: inline-block; float: none; -webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">2. Click the 'Check' button.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132434933/original/AQWFyq_-ynVISpC2Szh6hHILK_s0lT0E7A.png?1611775863\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132434933/original/AQWFyq_-ynVISpC2Szh6hHILK_s0lT0E7A.png?1611775863\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><img src=\"https://attachment.freshservice.com/inline/attachment?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAwNTMyNDQxOTMsImRvbWFpbiI6InN0YWd3ZWxsdGVjaC5mcmVzaHNlcnZpY2UuY29tIiwidHlwZSI6MX0.TnI5_4jqv1wUJA2aijdDmGOGZlbtFV0Tiv7qvcp8qGc\" data-id=\"10053244193\" data-store-type=\"1\" class=\"fr-fil fr-dib\" style=\"margin: 5px auto 5px 0px; padding: 0px 1px; border: none; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: top; cursor: pointer; position: relative; display: inline-block; float: none; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132434933/original/AQWFyq_-ynVISpC2Szh6hHILK_s0lT0E7A.png?1611775863\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><br style=\"-webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">3. After performing a search, Command | Update will tell you if you have any updates available. If you want, you can review them by clicking 'View Details'. You can also select which updates you want to install, but just leave everything checked unless you have a reason not to.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">I recommend keeping the 'Automatically restart system' box unchecked. When you're ready, go ahead and click the 'Install' button.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435004/original/h7FAoOl6KjRyjzTPFB60ipbWCpjscyyPpQ.png?1611775992\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435004/original/h7FAoOl6KjRyjzTPFB60ipbWCpjscyyPpQ.png?1611775992\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><img src=\"https://attachment.freshservice.com/inline/attachment?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAwNTMyNDQyMDEsImRvbWFpbiI6InN0YWd3ZWxsdGVjaC5mcmVzaHNlcnZpY2UuY29tIiwidHlwZSI6MX0.XuePVmqfkwz72wcBavV4dIIeOcLsm_1XItJqOsEVlR8\" data-id=\"10053244201\" data-store-type=\"1\" class=\"fr-fil fr-dib\" style=\"margin: 5px auto 5px 0px; padding: 0px 1px; border: none; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: top; cursor: pointer; position: relative; display: inline-block; float: none; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435004/original/h7FAoOl6KjRyjzTPFB60ipbWCpjscyyPpQ.png?1611775992\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background-image: initial; background-position: initial; background-size: initial; background-repeat: initial; background-attachment: initial; background-origin: initial; background-clip: initial; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><br style=\"-webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">6. Command | Update will download and install your updates.&nbsp;</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span style=\"margin: 0px auto 0px 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">&nbsp;</span></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435024/original/McZ379qIcNKIbuwycgeACEngEHpjO09jvA.png?1611776039\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(0, 63, 210); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><img src=\"https://attachment.freshservice.com/inline/attachment?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAwNTMyNDQyMDcsImRvbWFpbiI6InN0YWd3ZWxsdGVjaC5mcmVzaHNlcnZpY2UuY29tIiwidHlwZSI6MX0.B4BoFHdim6gx7kchZweEnXcTTCF0Df0t0A9d012ViSU\" data-id=\"10053244207\" data-store-type=\"1\" class=\"fr-fil fr-dib\" style=\"margin: 5px auto 5px 0px; padding: 0px 1px; border: none; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: top; cursor: pointer; position: relative; display: inline-block; float: none; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435024/original/McZ379qIcNKIbuwycgeACEngEHpjO09jvA.png?1611776039\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(0, 63, 210); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><br style=\"-webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">7. If the updates need a restart, you'll be prompted for a restart. Remember:&nbsp;<span style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: 700; font-style: inherit; font-size: 13px; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">make sure your computer is plugged into power</span>, then click 'Restart'.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435042/original/i7RiCpw6mzdRhJrK_0_w6IRv1VPZvNZjyw.png?1611776080\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435042/original/i7RiCpw6mzdRhJrK_0_w6IRv1VPZvNZjyw.png?1611776080\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><img src=\"https://attachment.freshservice.com/inline/attachment?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTAwNTMyNDQyMTAsImRvbWFpbiI6InN0YWd3ZWxsdGVjaC5mcmVzaHNlcnZpY2UuY29tIiwidHlwZSI6MX0.biG_bn_NOeKwZzno_PWDBPe-awkMhNqWExxhXqa7PaE\" data-id=\"10053244210\" data-store-type=\"1\" class=\"fr-fil fr-dib\" style=\"margin: 5px auto 5px 0px; padding: 0px 1px; border: none; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: top; cursor: pointer; position: relative; display: inline-block; float: none; -webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><a target=\"_blank\" href=\"https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/5132435042/original/i7RiCpw6mzdRhJrK_0_w6IRv1VPZvNZjyw.png?1611776080\" rel=\"noreferrer\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; background: transparent; color: rgb(4, 156, 219); text-decoration: none; user-select: auto; -webkit-font-smoothing: antialiased;\"><br style=\"-webkit-font-smoothing: antialiased;\"></a></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">After installation, your computer will restart and you can get back to work. Most system updates like this take less than 10 minutes to complete.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\">I'll throw in one last warning about keeping your computer plugged in while it's installing and restarting.&nbsp;<span style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: 700; font-style: inherit; font-size: 13px; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">If your computer loses power while installing critical system components (like the BIOS), this can corrupt the BIOS and turn your computer into a paperweight</span>. Seriously, a bad BIOS update can irreparably and permanently break your computer, so keep it plugged in.</div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><br style=\"-webkit-font-smoothing: antialiased;\"></div><div style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-size: 14px; font-family: &quot;courier new&quot;, monospace; vertical-align: baseline; line-height: 1.3; word-break: normal; overflow-wrap: break-word; -webkit-font-smoothing: antialiased; color: rgb(18, 51, 76); background-color: rgb(255, 255, 255);\"><span dir=\"ltr\" style=\"margin: 0px; padding: 0px; border-style: initial; border-color: initial; border-image: initial; outline: 0px; font-weight: inherit; font-style: inherit; vertical-align: baseline; -webkit-font-smoothing: antialiased;\">Please, let me know if this works for you.</span></div>"
-  }
-
-
-];
 ];
 
 export const getKB = (): KBEntry[] => {
   const localData = localStorage.getItem(KB_KEY);
   const localKB: KBEntry[] = localData ? JSON.parse(localData) : [];
   
-  // Create a map for easy lookups
   const kbMap = new Map<string, KBEntry>();
   
-  // 1. Load defaults from code (The "Official" version)
+  // 1. Load defaults from code
   DEFAULT_KB.forEach(entry => {
     if (entry && typeof entry.question === 'string') {
       kbMap.set(entry.question.toLowerCase().trim(), entry);
     }
   });
   
-  // 2. Overlay local storage (Your recent unsaved UI edits)
+  // 2. Overlay local storage
   localKB.forEach(entry => {
     if (entry && typeof entry.question === 'string') {
       kbMap.set(entry.question.toLowerCase().trim(), entry);
