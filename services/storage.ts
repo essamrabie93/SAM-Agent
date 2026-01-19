@@ -17,7 +17,6 @@ const STATS_KEY = 'sam_stats';
 
 const DEFAULT_KB: KBEntry[] = [
   // PASTE YOUR KB JSON HERE:
-];
 
 const DEFAULT_ASSETS: AssetEntry[] = [
   // PASTE YOUR ASSETS JSON HERE:
@@ -822,6 +821,7 @@ const DEFAULT_ASSETS: AssetEntry[] = [
   }
 
 
+];
 ];
 
 export const getKB = (): KBEntry[] => {
