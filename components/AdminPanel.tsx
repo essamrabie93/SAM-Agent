@@ -73,9 +73,11 @@ export const AdminPanel: React.FC = () => {
   };
 
   const exportForCode = () => {
-    const dataStr = JSON.stringify(entries, null, 2);
+    const dataToExport = activeTab === 'knowledge' ? entries : assets;
+    const dataStr = JSON.stringify(dataToExport, null, 2);
     navigator.clipboard.writeText(dataStr);
-    alert("JSON Copied to Clipboard! Paste this into 'DEFAULT_KB' in services/storage.ts for permanent deployment.");
+    const target = activeTab === 'knowledge' ? 'DEFAULT_KB' : 'DEFAULT_ASSETS';
+    alert(`JSON Copied! Paste this into '${target}' in services/storage.ts, then commit to GitHub.`);
   };
 
   const importKB = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,18 +103,10 @@ export const AdminPanel: React.FC = () => {
   };
 
   const handleClearDatabase = () => {
-    const pass = prompt("DANGER: Enter Admin Password to WIPE ALL DATA:");
-    if (pass === ADMIN_PASSWORD) {
-      if (confirm("THIS ACTION IS PERMANENT. Delete all KB entries, Assets, and Stats?")) {
-        clearAllData();
-        setEntries([]);
-        setAssets([]);
-        setStats({ accessCount: 0 });
-        alert("System database has been cleared.");
-        window.location.reload();
-      }
-    } else if (pass !== null) {
-      alert("Incorrect password.");
+    if (confirm("Reset local cache? This wipes your browser memory and reloads data from the code (Git).")) {
+      clearAllData();
+      refreshData();
+      window.location.reload();
     }
   };
 
@@ -215,8 +209,8 @@ export const AdminPanel: React.FC = () => {
           <p className="text-slate-500 mt-1 text-sm">System Administration Dashboard</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button onClick={handleClearDatabase} className="bg-red-50 text-red-600 border border-red-100 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-red-600 hover:text-white transition-all shadow-sm">
-            <Trash className="w-4 h-4" /> Reset Database
+          <button onClick={handleClearDatabase} className="bg-white text-slate-500 border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm">
+            <RefreshCw className="w-4 h-4" /> Reset to Code
           </button>
           <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 flex items-center gap-3">
             <Activity className="text-brand-cyan w-5 h-5" />
@@ -275,11 +269,15 @@ export const AdminPanel: React.FC = () => {
                   <button onClick={handleAddAsset} className="w-full bg-brand-dark text-white font-bold py-4 rounded-xl shadow-lg hover:brightness-110 transition-all">Save Asset</button>
                 </div>
               </div>
-              <div className="bg-brand-cyan/5 rounded-3xl p-6 border-2 border-dashed border-brand-cyan/20 text-center">
-                <FileSpreadsheet className="w-8 h-8 text-brand-cyan mx-auto mb-2 opacity-50" />
-                <h3 className="font-bold text-brand-cyan text-sm mb-3">Bulk Serial Upload</h3>
-                <label className="inline-flex items-center gap-2 bg-white border border-brand-cyan/30 text-brand-cyan px-6 py-3 rounded-2xl font-bold text-xs cursor-pointer hover:bg-white/50 transition-all shadow-sm"><Upload className="w-4 h-4" /> Upload CSV File<input type="file" className="hidden" accept=".csv" onChange={handleCSVUpload} /></label>
-                <p className="text-[9px] text-slate-400 mt-3 uppercase tracking-widest font-bold">Format: Serial, Type, Email</p>
+              <div className="grid grid-cols-1 gap-2">
+                <div className="bg-brand-cyan/5 rounded-3xl p-6 border-2 border-dashed border-brand-cyan/20 text-center">
+                  <FileSpreadsheet className="w-8 h-8 text-brand-cyan mx-auto mb-2 opacity-50" />
+                  <h3 className="font-bold text-brand-cyan text-sm mb-3">Bulk Serial Upload</h3>
+                  <label className="inline-flex items-center gap-2 bg-white border border-brand-cyan/30 text-brand-cyan px-6 py-3 rounded-2xl font-bold text-xs cursor-pointer hover:bg-white/50 transition-all shadow-sm"><Upload className="w-4 h-4" /> Upload CSV File<input type="file" className="hidden" accept=".csv" onChange={handleCSVUpload} /></label>
+                </div>
+                <button onClick={exportForCode} className="w-full bg-slate-800 text-white border border-slate-700 py-3 rounded-2xl text-[10px] font-bold flex items-center justify-center gap-2 hover:bg-black shadow-md transition-all">
+                  <Code className="w-4 h-4 text-brand-yellow" /> Export Assets for Code
+                </button>
               </div>
             </>
           )}
