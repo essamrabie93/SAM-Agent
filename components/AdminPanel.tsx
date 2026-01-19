@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { getKB, saveKB, getStats, getAssets, saveAssets, clearAllData, deleteKB } from '../services/storage';
 import { isFirebaseActive } from '../services/firebase';
 import { KBEntry, AssetEntry } from '../types';
-import { Plus, Trash2, Edit2, X, Activity, Database, Search, Download, Copy, Check, Monitor, Laptop, Headphones, Keyboard, Mouse, Hash, Mail, ClipboardPaste, Upload, FileSpreadsheet, Save, FileJson, Trash, RefreshCw, User, Code, Globe, Terminal, CheckCircle2, AlertCircle, FileUp, FolderOpen, DatabaseZap } from 'lucide-react';
+import { Plus, Trash2, Edit2, X, Activity, Database, Search, Download, Copy, Check, Monitor, Laptop, Headphones, Keyboard, Mouse, Hash, Mail, ClipboardPaste, Upload, FileSpreadsheet, Save, FileJson, Trash, RefreshCw, User, Code, Globe, Terminal, CheckCircle2, AlertCircle, FileUp, FolderOpen, DatabaseZap, ExternalLink } from 'lucide-react';
 import { Logo } from './Logo';
 
 export const AdminPanel: React.FC = () => {
@@ -17,6 +16,7 @@ export const AdminPanel: React.FC = () => {
   const [showImportArea, setShowImportArea] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
   const [isCloudActive, setIsCloudActive] = useState(false);
+  const [cloudError, setCloudError] = useState<string | null>(null);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [newEntry, setNewEntry] = useState<Partial<KBEntry>>({ question: '', answer: '' });
@@ -33,13 +33,19 @@ export const AdminPanel: React.FC = () => {
   }, []);
 
   const refreshData = async () => {
-    setEntries(await getKB());
-    setAssets(await getAssets());
-    setStats(getStats());
+    try {
+      setCloudError(null);
+      setEntries(await getKB());
+      setAssets(await getAssets());
+      setStats(getStats());
+    } catch (err: any) {
+      if (err.message?.includes('permission-denied') || err.message?.includes('disabled')) {
+        setCloudError("Firestore API is disabled for this project.");
+      }
+    }
   };
 
   const parseCSV = (text: string): any[] => {
-    // Basic CSV parser that handles quotes and commas
     const rows: string[][] = [];
     let currentRow: string[] = [];
     let currentField = '';
@@ -53,15 +59,11 @@ export const AdminPanel: React.FC = () => {
         if (char === '"' && nextChar === '"') {
           currentField += '"';
           i++;
-        } else if (char === '"') {
-          inQuotes = false;
-        } else {
-          currentField += char;
-        }
+        } else if (char === '"') inQuotes = false;
+        else currentField += char;
       } else {
-        if (char === '"') {
-          inQuotes = true;
-        } else if (char === ',') {
+        if (char === '"') inQuotes = true;
+        else if (char === ',') {
           currentRow.push(currentField.trim());
           currentField = '';
         } else if (char === '\n' || char === '\r') {
@@ -107,7 +109,6 @@ export const AdminPanel: React.FC = () => {
 
         if (csvData.length === 0) throw new Error("File is empty or invalid format.");
 
-        // Grouping logic for "Name", "Asset Type", "Used By"
         const emailMap: Record<string, AssetEntry> = {};
 
         csvData.forEach(row => {
@@ -123,33 +124,29 @@ export const AdminPanel: React.FC = () => {
             };
           }
 
-          if (type.includes('laptop') || type.includes('notebook')) emailMap[email].laptop = serial;
-          else if (type.includes('monitor') || type.includes('display') || type.includes('screen')) {
-            // If already has a monitor, append it or handle multiple
-            emailMap[email].monitor = emailMap[email].monitor ? `${emailMap[email].monitor}, ${serial}` : serial;
-          }
-          else if (type.includes('headset') || type.includes('audio')) emailMap[email].headset = serial;
-          else if (type.includes('dock')) emailMap[email].dockingStation = serial;
-          else if (type.includes('keyboard')) emailMap[email].keyboard = serial;
-          else if (type.includes('mouse')) emailMap[email].mouse = serial;
+          const target = emailMap[email];
+          const append = (curr: string, val: string) => curr ? `${curr}, ${val}` : val;
+
+          if (type.includes('laptop') || type.includes('notebook')) target.laptop = append(target.laptop, serial);
+          else if (type.includes('monitor') || type.includes('display') || type.includes('screen')) target.monitor = append(target.monitor, serial);
+          else if (type.includes('headset') || type.includes('audio')) target.headset = append(target.headset, serial);
+          else if (type.includes('dock')) target.dockingStation = append(target.dockingStation, serial);
+          else if (type.includes('keyboard')) target.keyboard = append(target.keyboard, serial);
+          else if (type.includes('mouse')) target.mouse = append(target.mouse, serial);
         });
 
         const mappedAssets = Object.values(emailMap);
+        if (mappedAssets.length === 0) throw new Error("No valid records found. Required columns: Name, Asset Type, Used By.");
 
-        if (mappedAssets.length === 0) throw new Error("No valid records found. Make sure columns 'Name', 'Asset Type', and 'Used By' exist.");
-
-        // Merge with existing
-        const existingMap = new Map(assets.map(a => [a.email.toLowerCase(), a]));
-        mappedAssets.forEach(newA => {
-          existingMap.set(newA.email.toLowerCase(), newA);
-        });
+        // Fix: Explicitly type the Map to prevent inference as Map<any, any> which leads to unknown[] from values()
+        const existingMap = new Map<string, AssetEntry>(assets.map(a => [a.email.toLowerCase(), a]));
+        mappedAssets.forEach(newA => existingMap.set(newA.email.toLowerCase(), newA));
 
         const updated = Array.from(existingMap.values());
         setAssets(updated);
         await saveAssets(updated);
         setShowImportArea(false);
         alert(`CSV Processed: Updated ${mappedAssets.length} user records!`);
-        
         if (fileInputRef.current) fileInputRef.current.value = '';
       } catch (err: any) {
         setImportError(err.message || "Failed to parse CSV.");
@@ -161,23 +158,7 @@ export const AdminPanel: React.FC = () => {
   const handleCopyNewCode = () => {
     const kbJson = JSON.stringify(entries, null, 2);
     const assetJson = JSON.stringify(assets, null, 2);
-    
-    const fileTemplate = `// Backup Generated on ${new Date().toLocaleString()}
-import { KBEntry, AssetEntry, AppStats } from '../types';
-
-const KB_KEY = 'sam_knowledge_base';
-const ASSETS_KEY = 'sam_asset_base';
-const STATS_KEY = 'sam_stats';
-
-const DEFAULT_KB: KBEntry[] = ${kbJson};
-const DEFAULT_ASSETS: AssetEntry[] = ${assetJson};
-
-export const getKB = async (): Promise<KBEntry[]> => {
-  const localData = localStorage.getItem(KB_KEY);
-  return localData ? JSON.parse(localData) : DEFAULT_KB;
-};
-// ... rest of the standard storage file logic ...`;
-
+    const fileTemplate = `// Backup Generated on ${new Date().toLocaleString()}\nimport { KBEntry, AssetEntry, AppStats } from '../types';\nconst KB_KEY = 'sam_knowledge_base';\nconst ASSETS_KEY = 'sam_asset_base';\nconst STATS_KEY = 'sam_stats';\nconst DEFAULT_KB: KBEntry[] = ${kbJson};\nconst DEFAULT_ASSETS: AssetEntry[] = ${assetJson};\n// ...`;
     navigator.clipboard.writeText(fileTemplate);
     setCopied(true);
     setTimeout(() => setCopied(false), 3000);
@@ -269,6 +250,21 @@ export const getKB = async (): Promise<KBEntry[]> => {
         </div>
       </div>
 
+      {cloudError && (
+        <div className="bg-red-50 border-2 border-red-100 p-6 rounded-3xl flex items-start gap-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="bg-red-500 text-white p-2 rounded-xl"><AlertCircle className="w-6 h-6" /></div>
+          <div className="space-y-1">
+            <h3 className="font-black text-red-900 uppercase text-xs tracking-wider">Cloud Sync Error</h3>
+            <p className="text-sm text-red-700 leading-relaxed">The Cloud Firestore API is disabled for your project <b>sam-agent-856e0</b>.</p>
+            <div className="pt-2">
+              <a href="https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=sam-agent-856e0" target="_blank" className="inline-flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-700 transition-all shadow-md">
+                Enable Firestore API <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex border-b border-slate-200 gap-8 overflow-x-auto no-scrollbar">
         <button onClick={() => setActiveTab('knowledge')} className={`pb-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${activeTab === 'knowledge' ? 'border-brand-cyan text-brand-cyan' : 'border-transparent text-slate-400'}`}>Knowledge Base</button>
         <button onClick={() => setActiveTab('assets')} className={`pb-4 text-sm font-bold transition-all border-b-2 whitespace-nowrap ${activeTab === 'assets' ? 'border-brand-cyan text-brand-cyan' : 'border-transparent text-slate-400'}`}>Asset Custody</button>
@@ -280,44 +276,28 @@ export const getKB = async (): Promise<KBEntry[]> => {
           <div className="space-y-6">
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-6">
               <div className="bg-brand-cyan/10 w-16 h-16 rounded-2xl flex items-center justify-center text-brand-cyan mb-2"><DatabaseZap className="w-8 h-8" /></div>
-              <h2 className="text-2xl font-black text-brand-dark">Firebase Integration</h2>
-              <p className="text-slate-600 text-sm leading-relaxed">By default, SAM stores data locally. Your current config is already pointing to your project <b>sam-agent-856e0</b>.</p>
+              <h2 className="text-2xl font-black text-brand-dark">Sync Data Guide</h2>
+              <p className="text-slate-600 text-sm leading-relaxed">How to populate the database properly:</p>
               
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
-                <p className="text-xs font-bold text-slate-700">How to populate the Cloud:</p>
                 <ol className="text-[11px] text-slate-500 space-y-2 list-decimal pl-4">
-                   <li>Upload your CSV in the <b>Asset Custody</b> tab.</li>
-                   <li>Wait for the "CSV Processed" message.</li>
-                   <li>The data is now stored in your browser's local cache.</li>
-                   <li>If Firebase is connected (check status above), SAM will automatically push new/edited records to your Firestore collections named <code>assets</code> and <code>kb</code>.</li>
+                   <li>Ensure <b>Firestore API</b> is enabled in your Google Console.</li>
+                   <li>Go to the <b>Asset Custody</b> tab.</li>
+                   <li>Click <b>Browse CSV</b> and select your file.</li>
+                   <li>SAM will group your rows (Name/Serial, Asset Type, Used By) locally.</li>
+                   <li>If the cloud icon is green, it will automatically attempt to save these user groups to Firebase.</li>
                 </ol>
               </div>
-
-              {!isCloudActive && (
-                <div className="flex items-center gap-3 p-4 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl">
-                  <AlertCircle className="w-5 h-5 text-brand-yellow shrink-0" />
-                  <p className="text-[10px] text-brand-yellow/80 font-bold uppercase tracking-tight">Cloud is not yet active. Verify your keys in services/firebase.ts</p>
-                </div>
-              )}
             </div>
           </div>
 
           <div className="space-y-6">
             <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl text-white space-y-6">
-              <div className="flex items-center gap-3 text-brand-yellow mb-2"><Terminal className="w-6 h-6" /><h3 className="font-bold uppercase tracking-widest text-xs">Manual Git Backup</h3></div>
-              <p className="text-slate-400 text-xs text-balance">If you prefer not to use Firebase for everything, you can hardcode your current data into the source code.</p>
-              
-              <div className="space-y-3 font-mono text-sm">
-                 <button onClick={handleCopyNewCode} className="w-full py-4 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2 transition-all">
-                    {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
-                    {copied ? "Copied!" : "Copy storage.ts Backup Code"}
-                 </button>
-              </div>
-
-              <div className="pt-4 border-t border-white/5 flex items-center gap-3 opacity-50">
-                <Activity className="w-4 h-4 text-green-400 animate-pulse" />
-                <p className="text-[10px] font-bold uppercase tracking-wider">Deploy to Vercel via Git Push</p>
-              </div>
+              <div className="flex items-center gap-3 text-brand-yellow mb-2"><Terminal className="w-6 h-6" /><h3 className="font-bold uppercase tracking-widest text-xs">Manual Backup</h3></div>
+              <button onClick={handleCopyNewCode} className="w-full py-4 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2 transition-all">
+                {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                {copied ? "Copied!" : "Copy storage.ts Source Code"}
+              </button>
             </div>
           </div>
         </div>
@@ -355,28 +335,27 @@ export const getKB = async (): Promise<KBEntry[]> => {
                         <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleCSVUpload} />
                       </div>
                       
-                      <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3">
-                        <AlertCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                        <div className="text-[10px] text-blue-700 font-medium leading-relaxed">
-                          <p className="font-bold mb-1">CSV Format Helper:</p>
+                      <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3 text-[10px] text-blue-700 font-medium leading-relaxed">
+                        <AlertCircle className="w-4 h-4 text-blue-500 shrink-0" />
+                        <div>
+                          <p className="font-bold mb-1">CSV Format Needed:</p>
                           <ul className="list-disc pl-3">
-                            <li><b>Name</b>: Asset Serial Number</li>
-                            <li><b>Asset Type</b>: Laptop, Monitor, etc.</li>
-                            <li><b>Used By</b>: User corporate email</li>
+                            <li><b>Name</b>: Serial Number</li>
+                            <li><b>Asset Type</b>: e.g. Laptop, Monitor</li>
+                            <li><b>Used By</b>: User Email</li>
                           </ul>
                         </div>
                       </div>
-                      
                       {importError && <p className="text-[10px] text-red-500 font-bold bg-red-50 p-2 rounded-lg border border-red-100 animate-shake">{importError}</p>}
                     </div>
                   ) : (
                     <>
                       <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="User email" value={newAsset.email} onChange={e => setNewAsset({...newAsset, email: e.target.value})} />
                       <div className="grid grid-cols-2 gap-2">
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Laptop Serial" value={newAsset.laptop} onChange={e => setNewAsset({...newAsset, laptop: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Monitor Serial" value={newAsset.monitor} onChange={e => setNewAsset({...newAsset, monitor: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Dock Serial" value={newAsset.dockingStation} onChange={e => setNewAsset({...newAsset, dockingStation: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Headset Serial" value={newAsset.headset} onChange={e => setNewAsset({...newAsset, headset: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Laptop S/N" value={newAsset.laptop} onChange={e => setNewAsset({...newAsset, laptop: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Monitor S/N" value={newAsset.monitor} onChange={e => setNewAsset({...newAsset, monitor: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Dock S/N" value={newAsset.dockingStation} onChange={e => setNewAsset({...newAsset, dockingStation: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Headset S/N" value={newAsset.headset} onChange={e => setNewAsset({...newAsset, headset: e.target.value})} />
                       </div>
                       <button onClick={handleAddAsset} className="w-full bg-brand-dark text-white font-bold py-4 rounded-xl shadow-lg">Save Asset</button>
                     </>
@@ -412,15 +391,15 @@ export const getKB = async (): Promise<KBEntry[]> => {
                     <div className="flex justify-between items-center mb-4">
                       <div className="flex items-center gap-5">
                         <div className="bg-brand-cyan/10 p-4 rounded-2xl text-brand-cyan shadow-inner"><User className="w-8 h-8" /></div>
-                        <div><h3 className="text-lg font-black text-brand-dark">{asset.email}</h3><p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Master Equipment Record</p></div>
+                        <div><h3 className="text-lg font-black text-brand-dark">{asset.email}</h3><p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Master Record</p></div>
                       </div>
                       <button onClick={() => { if(confirm("Delete?")) { saveAssets(assets.filter(a => a.email !== asset.email)); refreshData(); } }} className="p-3 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-6 h-6" /></button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                       {asset.laptop && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Laptop S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.laptop}</p></div>}
-                       {asset.monitor && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Monitor S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.monitor}</p></div>}
-                       {asset.headset && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Headset S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.headset}</p></div>}
-                       {asset.dockingStation && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Dock S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.dockingStation}</p></div>}
+                       {asset.laptop && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Laptop</p><p className="text-[11px] font-mono font-bold text-slate-700 whitespace-pre-wrap">{asset.laptop}</p></div>}
+                       {asset.monitor && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Monitor</p><p className="text-[11px] font-mono font-bold text-slate-700 whitespace-pre-wrap">{asset.monitor}</p></div>}
+                       {asset.headset && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Headset</p><p className="text-[11px] font-mono font-bold text-slate-700 whitespace-pre-wrap">{asset.headset}</p></div>}
+                       {asset.dockingStation && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Dock</p><p className="text-[11px] font-mono font-bold text-slate-700 whitespace-pre-wrap">{asset.dockingStation}</p></div>}
                     </div>
                   </div>
                 ))
