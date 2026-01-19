@@ -18,6 +18,39 @@ const STATS_KEY = 'sam_stats';
 const DEFAULT_KB: KBEntry[] = [
   // Example: { "id": "1", "question": "How to reset VPN?", "answer": "Contact helpdesk..." }
   // PASTE YOUR KB JSON HERE:
+Thanks for reporting this.  Your laptop might need an update to fix this issue.
+Can you please follow these steps below to run updates on your laptop? 
+ 
+1. Search for "Dell Command | Update" from the Start menu., or locate it under the 'All Apps' list:
+
+
+
+2. Click the 'Check' button.
+
+
+
+3. After performing a search, Command | Update will tell you if you have any updates available. If you want, you can review them by clicking 'View Details'. You can also select which updates you want to install, but just leave everything checked unless you have a reason not to.
+
+I recommend keeping the 'Automatically restart system' box unchecked. When you're ready, go ahead and click the 'Install' button.
+
+
+
+
+6. Command | Update will download and install your updates. 
+ 
+
+
+
+7. If the updates need a restart, you'll be prompted for a restart. Remember: make sure your computer is plugged into power, then click 'Restart'.
+​
+
+
+After installation, your computer will restart and you can get back to work. Most system updates like this take less than 10 minutes to complete.
+
+I'll throw in one last warning about keeping your computer plugged in while it's installing and restarting. If your computer loses power while installing critical system components (like the BIOS), this can corrupt the BIOS and turn your computer into a paperweight. Seriously, a bad BIOS update can irreparably and permanently break your computer, so keep it plugged in.
+
+Please, let me know if this works for you.
+
 ];
 
 const DEFAULT_ASSETS: AssetEntry[] = [
