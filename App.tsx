@@ -114,10 +114,6 @@ const App: React.FC = () => {
     }
   };
 
-  /**
-   * ADVANCED SEARCH ENGINE
-   * Prevents matching wrong questions by using token significance and mismatch penalties.
-   */
   const findBestKBMatch = (input: string): KBEntry | null => {
     const kb = getKB();
     const cleanInput = input.toLowerCase().trim().replace(/[?!.]/g, '');
@@ -135,31 +131,23 @@ const App: React.FC = () => {
       let score = 0;
       let matchedSignificantTokens = 0;
       
-      // 1. Exact Phrase Match
       if (q === cleanInput) score += 300;
 
-      // 2. Token Matching with Weighted Significance
       queryTokens.forEach(token => {
         if (q.includes(token)) {
           const weight = TECH_WEIGHTS[token] || 15;
           score += weight;
           matchedSignificantTokens++;
         } else {
-          // Penalty for tokens in query that ARE NOT in question
-          // Prevents "How to VPN" matching "How to reset Password"
           if (TECH_WEIGHTS[token]) score -= 25; 
         }
       });
 
-      // 3. Penalty for length mismatch
       const lengthRatio = Math.min(qTokens.length, queryTokens.length) / Math.max(qTokens.length, queryTokens.length);
       score = score * (0.5 + 0.5 * lengthRatio);
 
-      // 4. Threshold Logic: Higher standard for matching
-      // If user asks "Wifi", we need high certainty.
       const queryComplexity = queryTokens.length;
       const minMatchedTokens = queryComplexity > 1 ? 2 : 1;
-      
       const threshold = Math.max(35, queryComplexity * 10);
 
       if (score > maxScore && score >= threshold && matchedSignificantTokens >= minMatchedTokens) {
@@ -209,18 +197,26 @@ const App: React.FC = () => {
     setIsTyping(true);
     setShowFeedback(false);
 
-    // Precise Custody Trigger
+    // REFINED INTENT ANALYSIS
     const inputLower = currentInput.toLowerCase();
-    const hardware = ['laptop', 'monitor', 'pc', 'dock', 'mouse', 'keyboard', 'headset', 'serial', 'asset', 'sn', 'equipment'];
-    const possessive = ['my', 'mine', 'own', 'assigned'];
-    const action = ['check', 'show', 'list', 'what', 'view', 'look', 'find'];
+    
+    // Troubleshooting Keywords (If present, we do NOT trigger custody)
+    const troubleWords = ['slow', 'broken', 'fix', 'problem', 'issue', 'not working', 'error', 'failed', 'help', 'stuck', 'repair', 'screen', 'crash', 'boot', 'charging'];
+    const isTroubleshooting = troubleWords.some(w => inputLower.includes(w));
+
+    // Information/Asset Keywords (If present, we DO trigger custody)
+    const infoWords = ['serial', 'sn', 'tag', 'asset', 'custody', 'assigned', 'inventory', 'record', 'my gear', 'my equipment', 'my setup'];
+    const isAssetInfoRequest = infoWords.some(w => inputLower.includes(w));
+
+    // Basic hardware detection
+    const hardware = ['laptop', 'monitor', 'pc', 'dock', 'mouse', 'keyboard', 'headset'];
+    const actions = ['check', 'show', 'list', 'what', 'view', 'look', 'find'];
     
     const hasHardware = hardware.some(h => inputLower.includes(h));
-    const hasPossessive = possessive.some(p => inputLower.includes(p));
-    const hasAction = action.some(a => inputLower.includes(a));
-    const isExplicitCustody = inputLower.includes('custody');
+    const hasAction = actions.some(a => inputLower.includes(a));
 
-    if (isExplicitCustody || (hasHardware && (hasPossessive || hasAction))) {
+    // Logic: Only trigger custody if user explicitly wants info and IS NOT reporting an issue.
+    if (!isTroubleshooting && (isAssetInfoRequest || (hasHardware && hasAction))) {
       setTimeout(() => {
         setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: "I can look up your assigned equipment. Please provide your corporate email address:" }]);
         setAwaitingEmailForCustody(true);
@@ -229,6 +225,7 @@ const App: React.FC = () => {
       return;
     }
 
+    // Knowledge Base Match
     const match = findBestKBMatch(currentInput);
 
     if (match) {
@@ -238,6 +235,7 @@ const App: React.FC = () => {
         setShowFeedback(true);
       }, 800);
     } else {
+      // Gemini AI Fallback
       const aiResponse = await askGemini(currentInput, messages.filter(m => !m.choices));
       setMessages(prev => [...prev, { id: Date.now().toString(), role: 'assistant', content: aiResponse, isKBMatch: false }]);
       setIsTyping(false);
