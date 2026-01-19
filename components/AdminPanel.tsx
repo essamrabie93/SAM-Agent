@@ -39,22 +39,59 @@ export const AdminPanel: React.FC = () => {
   };
 
   const parseCSV = (text: string): any[] => {
-    const lines = text.split(/\r?\n/);
-    if (lines.length < 2) return [];
+    // Basic CSV parser that handles quotes and commas
+    const rows: string[][] = [];
+    let currentRow: string[] = [];
+    let currentField = '';
+    let inQuotes = false;
 
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    const data = [];
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const nextChar = text[i + 1];
 
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      const values = lines[i].split(',').map(v => v.trim());
+      if (inQuotes) {
+        if (char === '"' && nextChar === '"') {
+          currentField += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = false;
+        } else {
+          currentField += char;
+        }
+      } else {
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === ',') {
+          currentRow.push(currentField.trim());
+          currentField = '';
+        } else if (char === '\n' || char === '\r') {
+          if (currentField || currentRow.length > 0) {
+            currentRow.push(currentField.trim());
+            rows.push(currentRow);
+            currentRow = [];
+            currentField = '';
+          }
+          if (char === '\r' && nextChar === '\n') i++;
+        } else {
+          currentField += char;
+        }
+      }
+    }
+    if (currentField || currentRow.length > 0) {
+      currentRow.push(currentField.trim());
+      rows.push(currentRow);
+    }
+
+    if (rows.length < 2) return [];
+
+    const headers = rows[0].map(h => h.toLowerCase().trim());
+    return rows.slice(1).map(row => {
       const obj: any = {};
       headers.forEach((header, index) => {
-        obj[header] = values[index] || "";
+        obj[header] = row[index] || "";
       });
-      data.push(obj);
-    }
-    return data;
+      return obj;
+    });
   };
 
   const handleCSVUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,34 +107,48 @@ export const AdminPanel: React.FC = () => {
 
         if (csvData.length === 0) throw new Error("File is empty or invalid format.");
 
-        // Smart Mapping: Try to find columns regardless of exact naming
-        const mappedAssets: AssetEntry[] = csvData.map(row => {
-          const find = (keywords: string[]) => {
-            const key = Object.keys(row).find(k => keywords.some(kw => k.includes(kw)));
-            return key ? row[key] : "";
-          };
+        // Grouping logic for "Name", "Asset Type", "Used By"
+        const emailMap: Record<string, AssetEntry> = {};
 
-          return {
-            email: find(['email', 'mail', 'user', 'owner']),
-            laptop: find(['laptop', 'computer', 'notebook', 'sn', 'serial']),
-            monitor: find(['monitor', 'screen', 'display']),
-            headset: find(['headset', 'audio', 'phone']),
-            dockingStation: find(['dock', 'hub', 'station']),
-            keyboard: find(['keyboard', 'kb']),
-            mouse: find(['mouse', 'pointer'])
-          };
-        }).filter(a => a.email);
+        csvData.forEach(row => {
+          const email = (row['used by'] || '').toLowerCase().trim();
+          if (!email || email === 'n/a') return;
 
-        if (mappedAssets.length === 0) throw new Error("No valid records found. Make sure there is an 'email' column.");
+          const serial = row['name'] || '';
+          const type = (row['asset type'] || '').toLowerCase();
 
-        const existingEmails = new Set(assets.map(a => a.email.toLowerCase()));
-        const uniqueNewAssets = mappedAssets.filter(a => !existingEmails.has(a.email.toLowerCase()));
+          if (!emailMap[email]) {
+            emailMap[email] = {
+              email, laptop: '', monitor: '', headset: '', dockingStation: '', keyboard: '', mouse: ''
+            };
+          }
 
-        const updated = [...uniqueNewAssets, ...assets];
+          if (type.includes('laptop') || type.includes('notebook')) emailMap[email].laptop = serial;
+          else if (type.includes('monitor') || type.includes('display') || type.includes('screen')) {
+            // If already has a monitor, append it or handle multiple
+            emailMap[email].monitor = emailMap[email].monitor ? `${emailMap[email].monitor}, ${serial}` : serial;
+          }
+          else if (type.includes('headset') || type.includes('audio')) emailMap[email].headset = serial;
+          else if (type.includes('dock')) emailMap[email].dockingStation = serial;
+          else if (type.includes('keyboard')) emailMap[email].keyboard = serial;
+          else if (type.includes('mouse')) emailMap[email].mouse = serial;
+        });
+
+        const mappedAssets = Object.values(emailMap);
+
+        if (mappedAssets.length === 0) throw new Error("No valid records found. Make sure columns 'Name', 'Asset Type', and 'Used By' exist.");
+
+        // Merge with existing
+        const existingMap = new Map(assets.map(a => [a.email.toLowerCase(), a]));
+        mappedAssets.forEach(newA => {
+          existingMap.set(newA.email.toLowerCase(), newA);
+        });
+
+        const updated = Array.from(existingMap.values());
         setAssets(updated);
         await saveAssets(updated);
         setShowImportArea(false);
-        alert(`CSV Processed: Imported ${uniqueNewAssets.length} new records!`);
+        alert(`CSV Processed: Updated ${mappedAssets.length} user records!`);
         
         if (fileInputRef.current) fileInputRef.current.value = '';
       } catch (err: any) {
@@ -230,21 +281,22 @@ export const getKB = async (): Promise<KBEntry[]> => {
             <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg space-y-6">
               <div className="bg-brand-cyan/10 w-16 h-16 rounded-2xl flex items-center justify-center text-brand-cyan mb-2"><DatabaseZap className="w-8 h-8" /></div>
               <h2 className="text-2xl font-black text-brand-dark">Firebase Integration</h2>
-              <p className="text-slate-600 text-sm leading-relaxed">By default, SAM stores data locally. To sync across all devices, enable <b>Firebase Firestore</b> (it's free!).</p>
+              <p className="text-slate-600 text-sm leading-relaxed">By default, SAM stores data locally. Your current config is already pointing to your project <b>sam-agent-856e0</b>.</p>
               
               <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
-                <p className="text-xs font-bold text-slate-700">Setup Instructions:</p>
+                <p className="text-xs font-bold text-slate-700">How to populate the Cloud:</p>
                 <ol className="text-[11px] text-slate-500 space-y-2 list-decimal pl-4">
-                   <li>Go to <a href="https://console.firebase.google.com" target="_blank" className="text-brand-cyan underline">Firebase Console</a></li>
-                   <li>Create a new project and enable <b>Cloud Firestore</b> in Test Mode.</li>
-                   <li>Get your Config keys and paste them into <code className="bg-slate-200 px-1">services/firebase.ts</code></li>
+                   <li>Upload your CSV in the <b>Asset Custody</b> tab.</li>
+                   <li>Wait for the "CSV Processed" message.</li>
+                   <li>The data is now stored in your browser's local cache.</li>
+                   <li>If Firebase is connected (check status above), SAM will automatically push new/edited records to your Firestore collections named <code>assets</code> and <code>kb</code>.</li>
                 </ol>
               </div>
 
               {!isCloudActive && (
                 <div className="flex items-center gap-3 p-4 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl">
                   <AlertCircle className="w-5 h-5 text-brand-yellow shrink-0" />
-                  <p className="text-[10px] text-brand-yellow/80 font-bold uppercase tracking-tight">Cloud is not yet active. Data is currently saved to this browser only.</p>
+                  <p className="text-[10px] text-brand-yellow/80 font-bold uppercase tracking-tight">Cloud is not yet active. Verify your keys in services/firebase.ts</p>
                 </div>
               )}
             </div>
@@ -253,7 +305,7 @@ export const getKB = async (): Promise<KBEntry[]> => {
           <div className="space-y-6">
             <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl text-white space-y-6">
               <div className="flex items-center gap-3 text-brand-yellow mb-2"><Terminal className="w-6 h-6" /><h3 className="font-bold uppercase tracking-widest text-xs">Manual Git Backup</h3></div>
-              <p className="text-slate-400 text-xs text-balance">If you prefer not to use Firebase, you can still update everyone by pushing code updates to GitHub.</p>
+              <p className="text-slate-400 text-xs text-balance">If you prefer not to use Firebase for everything, you can hardcode your current data into the source code.</p>
               
               <div className="space-y-3 font-mono text-sm">
                  <button onClick={handleCopyNewCode} className="w-full py-4 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center gap-2 transition-all">
@@ -298,14 +350,21 @@ export const getKB = async (): Promise<KBEntry[]> => {
                         <div className="bg-white p-3 rounded-xl shadow-sm group-hover:scale-110 transition-transform"><FileUp className="w-6 h-6 text-brand-cyan" /></div>
                         <div className="space-y-1">
                           <p className="text-xs font-black text-brand-dark uppercase tracking-wide">Select Asset CSV</p>
-                          <p className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed">Upload spreadsheet data</p>
+                          <p className="text-[10px] text-slate-400 font-bold uppercase leading-relaxed">Required: Name, Asset Type, Used By</p>
                         </div>
                         <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleCSVUpload} />
                       </div>
                       
                       <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3">
                         <AlertCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                        <p className="text-[10px] text-blue-700 font-medium leading-relaxed">CSV must have an <b>email</b> column. Other hardware columns will be auto-mapped.</p>
+                        <div className="text-[10px] text-blue-700 font-medium leading-relaxed">
+                          <p className="font-bold mb-1">CSV Format Helper:</p>
+                          <ul className="list-disc pl-3">
+                            <li><b>Name</b>: Asset Serial Number</li>
+                            <li><b>Asset Type</b>: Laptop, Monitor, etc.</li>
+                            <li><b>Used By</b>: User corporate email</li>
+                          </ul>
+                        </div>
                       </div>
                       
                       {importError && <p className="text-[10px] text-red-500 font-bold bg-red-50 p-2 rounded-lg border border-red-100 animate-shake">{importError}</p>}
@@ -314,10 +373,10 @@ export const getKB = async (): Promise<KBEntry[]> => {
                     <>
                       <input className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="User email" value={newAsset.email} onChange={e => setNewAsset({...newAsset, email: e.target.value})} />
                       <div className="grid grid-cols-2 gap-2">
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Laptop S/N" value={newAsset.laptop} onChange={e => setNewAsset({...newAsset, laptop: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Monitor S/N" value={newAsset.monitor} onChange={e => setNewAsset({...newAsset, monitor: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Dock S/N" value={newAsset.dockingStation} onChange={e => setNewAsset({...newAsset, dockingStation: e.target.value})} />
-                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Headset S/N" value={newAsset.headset} onChange={e => setNewAsset({...newAsset, headset: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Laptop Serial" value={newAsset.laptop} onChange={e => setNewAsset({...newAsset, laptop: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Monitor Serial" value={newAsset.monitor} onChange={e => setNewAsset({...newAsset, monitor: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Dock Serial" value={newAsset.dockingStation} onChange={e => setNewAsset({...newAsset, dockingStation: e.target.value})} />
+                        <input className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Headset Serial" value={newAsset.headset} onChange={e => setNewAsset({...newAsset, headset: e.target.value})} />
                       </div>
                       <button onClick={handleAddAsset} className="w-full bg-brand-dark text-white font-bold py-4 rounded-xl shadow-lg">Save Asset</button>
                     </>
@@ -353,15 +412,15 @@ export const getKB = async (): Promise<KBEntry[]> => {
                     <div className="flex justify-between items-center mb-4">
                       <div className="flex items-center gap-5">
                         <div className="bg-brand-cyan/10 p-4 rounded-2xl text-brand-cyan shadow-inner"><User className="w-8 h-8" /></div>
-                        <div><h3 className="text-lg font-black text-brand-dark">{asset.email}</h3><p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Equipment Record</p></div>
+                        <div><h3 className="text-lg font-black text-brand-dark">{asset.email}</h3><p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Master Equipment Record</p></div>
                       </div>
                       <button onClick={() => { if(confirm("Delete?")) { saveAssets(assets.filter(a => a.email !== asset.email)); refreshData(); } }} className="p-3 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 className="w-6 h-6" /></button>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                       {asset.laptop && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Laptop</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.laptop}</p></div>}
-                       {asset.monitor && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Monitor</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.monitor}</p></div>}
-                       {asset.headset && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Headset</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.headset}</p></div>}
-                       {asset.dockingStation && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Dock</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.dockingStation}</p></div>}
+                       {asset.laptop && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Laptop S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.laptop}</p></div>}
+                       {asset.monitor && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Monitor S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.monitor}</p></div>}
+                       {asset.headset && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Headset S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.headset}</p></div>}
+                       {asset.dockingStation && <div className="p-2 bg-slate-50 rounded-lg border border-slate-100"><p className="text-[8px] font-bold text-slate-400 uppercase">Dock S/N</p><p className="text-[11px] font-mono font-bold text-slate-700 truncate">{asset.dockingStation}</p></div>}
                     </div>
                   </div>
                 ))
